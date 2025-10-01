@@ -1,6 +1,8 @@
 package com.security.auth.service;
 
 import com.security.auth.entity.UserInfo;
+import com.security.auth.eventProducer.UserInfoEvent;
+import com.security.auth.eventProducer.UserInfoProducer;
 import com.security.auth.model.UserInfoDTO;
 import com.security.auth.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -29,6 +31,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private  final PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private  final UserInfoProducer userInfoProducer;
+
     private static final Logger log = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
     @Override
@@ -56,7 +61,20 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         userRepository.save(new UserInfo(userId, userInfoDTO.getUsername(), userInfoDTO.getPassword(), new HashSet<>()));
         log.info("User registered successfully with username: {}", userInfoDTO.getUsername());
         //push event to queue for sending email
+        UserInfoEvent userInfoEvent = userInfoEventPublisher(userInfoDTO,userId);
+        userInfoProducer.sendEventToKafka(userInfoEvent);
         return true;
+    }
+
+    private  UserInfoEvent userInfoEventPublisher(UserInfoDTO userInfoDTO, String userId){
+        return  UserInfoEvent
+                .builder()
+                .userId(userId)
+                .email(userInfoDTO.getEmail())
+                .firstName(userInfoDTO.getFirstName())
+                .phoneNumber(userInfoDTO.getPhoneNumber())
+                .lastName(userInfoDTO.getLastName())
+                .build();
     }
 
 }

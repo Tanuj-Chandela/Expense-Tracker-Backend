@@ -27,22 +27,15 @@ ext {
 }
 
 dependencies {
-    // --------------------
-    // Spring Boot Starters
-    // --------------------
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
-    // --------------------
     // Database
-    // --------------------
     implementation "mysql:mysql-connector-java:${mysqlVersion}"
 
-    // --------------------
-    // Utility Libraries
-    // --------------------
+    // JWT (JSON Web Token)
+    implementation "io.jsonwebtoken:jjwt-api:${jwtVersion}"
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:${jwtVersion}"
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:${jwtVersion}"  // JSON serialization
+
     // Lombok (compile-time only)
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
@@ -50,14 +43,16 @@ dependencies {
     // ModelMapper
     implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
 
-    // JWT (JSON Web Token)
-    implementation "io.jsonwebtoken:jjwt-api:${jwtVersion}"
-    runtimeOnly "io.jsonwebtoken:jjwt-impl:${jwtVersion}"
-    runtimeOnly "io.jsonwebtoken:jjwt-jackson:${jwtVersion}"  // JSON serialization
+    // Spring Boot Starters
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
-    // --------------------
+    // Spring Kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
     // Testing
-    // --------------------
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
